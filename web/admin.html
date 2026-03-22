@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUX - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="nav-logo">BLUX</div>
+        <span class="admin-badge">ADMIN</span>
+    </div>
+    <div class="nav-right">
+        <span id="adminEmail" class="admin-email"></span>
+        <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-item active" onclick="mostrarTab('catalogo', this)">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" stroke-width="2" rx="1"/><rect x="14" y="3" width="7" height="7" stroke-width="2" rx="1"/><rect x="3" y="14" width="7" height="7" stroke-width="2" rx="1"/><rect x="14" y="14" width="7" height="7" stroke-width="2" rx="1"/></svg>
+            Catálogo
+        </div>
+        <div class="sidebar-item" onclick="mostrarTab('agregar', this)">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke-width="2" stroke-linecap="round"/></svg>
+            Agregar Contenido
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+        <!-- TAB: CATÁLOGO -->
+        <div id="tab-catalogo" class="tab active">
+            <div class="tab-header">
+                <div>
+                    <h1>Catálogo</h1>
+                    <p class="tab-sub">Gestiona todas las películas y series</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+                        <input type="text" id="catalogSearch" placeholder="Buscar..." onkeyup="filtrarCatalogo(event)">
+                    </div>
+                    <button class="btn-primary" onclick="mostrarTab('agregar', document.querySelector('[onclick*=agregar]'))">
+                        + Agregar
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-row" id="statsRow">
+                <div class="stat-card">
+                    <div class="stat-num" id="statTotal">0</div>
+                    <div class="stat-label">Total títulos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statPeliculas">0</div>
+                    <div class="stat-label">Películas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statSeries">0</div>
+                    <div class="stat-label">Series</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" id="statSecciones">0</div>
+                    <div class="stat-label">Secciones</div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="content-table">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Título</th>
+                            <th>Plataforma</th>
+                            <th>Tipo</th>
+                            <th>Sección</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catalogTable"></tbody>
+                </table>
+                <div class="empty-state" id="emptyState" style="display:none">
+                    <svg width="48" height="48" fill="none" stroke="#444" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M9 9h6M9 13h4" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <p>No hay contenido en el catálogo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: AGREGAR -->
+        <div id="tab-agregar" class="tab">
+            <div class="tab-header">
+                <div>
+                    <h1 id="formTitle">Agregar Contenido</h1>
+                    <p class="tab-sub">Completa los campos para agregar al catálogo</p>
+                </div>
+            </div>
+
+            <div class="form-layout">
+                <!-- PREVIEW -->
+                <div class="preview-panel">
+                    <div class="preview-card" id="previewCard">
+                        <img id="previewImg" src="" alt="" onerror="this.style.display='none'" style="display:none">
+                        <div class="preview-placeholder" id="previewPlaceholder">
+                            <svg width="40" height="40" fill="none" stroke="#444" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" stroke-width="1.5"/><path d="m21 15-5-5L5 21" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            <p>Vista previa</p>
+                        </div>
+                        <div class="preview-info" id="previewInfo" style="display:none">
+                            <div class="preview-title" id="previewTitle"></div>
+                            <div class="preview-meta" id="previewMeta"></div>
+                        </div>
+                    </div>
+                    <p class="preview-hint">La imagen se actualiza al escribir la URL</p>
+                </div>
+
+                <!-- FORMULARIO -->
+                <div class="form-panel">
+                    <input type="hidden" id="editId">
+
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" id="fTitulo" placeholder="Ej: Spider-Man: No Way Home" oninput="actualizarPreview()">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Plataforma *</label>
+                            <select id="fPlataforma" oninput="actualizarPreview()">
+                                <option value="">Seleccionar...</option>
+                                <option value="Netflix">Netflix</option>
+                                <option value="Disney+">Disney+</option>
+                                <option value="HBO Max">HBO Max</option>
+                                <option value="Amazon Prime">Amazon Prime</option>
+                                <option value="Apple TV+">Apple TV+</option>
+                                <option value="Paramount+">Paramount+</option>
+                                <option value="Crunchyroll">Crunchyroll</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <select id="fTipo" oninput="actualizarPreview()">
+                                <option value="">Seleccionar...</option>
+                                <option value="Pelicula">Película</option>
+                                <option value="Serie">Serie</option>
+                                <option value="Documental">Documental</option>
+                                <option value="Anime">Anime</option>
+                                <option value="Corto">Corto</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sección</label>
+                        <select id="fSeccionSelect" onchange="onSeccionChange()" oninput="actualizarPreview()">
+                            <option value="">Seleccionar sección...</option>
+                            <optgroup label="🎬 Géneros">
+                                <option value="Acción">⚔️ Acción</option>
+                                <option value="Comedia">😂 Comedia</option>
+                                <option value="Drama">🎭 Drama</option>
+                                <option value="Terror">👻 Terror</option>
+                                <option value="Romance">❤️ Romance</option>
+                                <option value="Ciencia Ficción">🚀 Ciencia Ficción</option>
+                                <option value="Animación">🎨 Animación</option>
+                                <option value="Suspenso">🔪 Suspenso</option>
+                                <option value="Aventura">🗺️ Aventura</option>
+                                <option value="Fantasía">🧙 Fantasía</option>
+                                <option value="Documental">📽️ Documental</option>
+                                <option value="Musical">🎵 Musical</option>
+                            </optgroup>
+                            <optgroup label="📊 Destacados">
+                                <option value="Tendencia">🔥 Tendencia</option>
+                                <option value="Aclamadas">⭐ Aclamadas</option>
+                                <option value="Nuevos lanzamientos">🆕 Nuevos lanzamientos</option>
+                                <option value="Top 10">🏆 Top 10</option>
+                                <option value="Populares">👥 Populares</option>
+                            </optgroup>
+                            <optgroup label="✏️ Personalizada">
+                                <option value="_custom">+ Escribir sección personalizada...</option>
+                            </optgroup>
+                        </select>
+                        <!-- Campo custom (se muestra al elegir "personalizada") -->
+                        <input type="text" id="fSeccionCustom" placeholder="Escribe el nombre de la sección..."
+                               style="display:none; margin-top:8px" oninput="actualizarPreview()">
+                        <input type="hidden" id="fSeccion">
+                        <p class="field-hint">Elige un género o categoría — esto define el filtro en Movies</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL de la imagen *</label>
+                        <input type="text" id="fImagen" placeholder="https://imagen.com/poster.jpg" oninput="actualizarImagenPreview()">
+                        <p class="field-hint">Pega la URL de la imagen del póster (IMDB, TMDB, etc.)</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL de reproducción</label>
+                        <input type="text" id="fUrl" placeholder="https://netflix.com/watch/...">
+                        <p class="field-hint">Link directo a la plataforma</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-secondary" onclick="limpiarFormulario()">Cancelar</button>
+                        <button class="btn-primary" onclick="guardarContenido()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke-width="2"/><path d="M17 21v-8H7v8M7 3v5h8" stroke-width="2" stroke-linecap="round"/></svg>
+                            Guardar
+                        </button>
+                    </div>
+
+                    <div class="form-msg" id="formMsg"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL CONFIRMAR ELIMINAR -->
+<div class="modal-overlay" id="deleteOverlay"></div>
+<div class="delete-modal" id="deleteModal">
+    <div class="delete-icon">🗑️</div>
+    <h3>¿Eliminar contenido?</h3>
+    <p id="deleteTitle"></p>
+    <p class="delete-warn">Esta acción no se puede deshacer.</p>
+    <div class="delete-actions">
+        <button class="btn-secondary" onclick="cerrarDeleteModal()">Cancelar</button>
+        <button class="btn-danger" onclick="confirmarEliminar()">Sí, eliminar</button>
+    </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

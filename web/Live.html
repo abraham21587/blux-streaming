@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUX - Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="live.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="nav-logo">BLUX</div>
+        <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="movies.html">Movies</a></li>
+            <li><a href="mylist.html">MyList</a></li>
+            <li><a href="live.html" class="active">Live</a></li>
+        </ul>
+    </div>
+    <div class="nav-right">
+        <div class="search-box">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="text" id="searchInput" placeholder="Buscar streams..." onkeyup="filtrarStreams(event)">
+        </div>
+        <div class="nav-profile" onclick="toggleProfileMenu()">
+            <img id="navAvatar" src="" alt="perfil" class="nav-avatar">
+            <span id="navName"></span>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div onclick="window.location.href='index.html'">Cambiar perfil</div>
+                <div onclick="cerrarSesion()">Cerrar sesión</div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="live-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="live-sidebar">
+        <div class="sidebar-welcome">
+            Bienvenid@ <span id="sidebarName" class="sidebar-username"></span>
+        </div>
+
+        <div class="sidebar-label">CANALES POPULARES</div>
+        <div id="sidebarChannels" class="sidebar-channels"></div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-label">RECOMENDADOS</div>
+        <div id="sidebarRecommended" class="sidebar-channels"></div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="live-main">
+
+        <!-- CATEGORÍAS -->
+        <div class="categories-bar">
+            <div class="categories-scroll" id="categoriesScroll">
+                <button class="cat-btn active" onclick="filtrarPorCategoria('all',this)">🎮 Todos</button>
+                <button class="cat-btn" onclick="filtrarPorCategoria('Games',this)">🎮 Games</button>
+                <button class="cat-btn" onclick="filtrarPorCategoria('IRL',this)">🎤 IRL</button>
+                <button class="cat-btn" onclick="filtrarPorCategoria('Music',this)">🎵 Music</button>
+                <button class="cat-btn" onclick="filtrarPorCategoria('Esports',this)">🏆 Esports</button>
+                <button class="cat-btn" onclick="filtrarPorCategoria('Creative',this)">🎨 Creative</button>
+            </div>
+        </div>
+
+        <!-- FEATURED 3 GRANDES -->
+        <section class="featured-section">
+            <div class="featured-grid" id="featuredGrid"></div>
+        </section>
+
+        <!-- GRID PEQUEÑO -->
+        <section class="all-section">
+            <div class="all-header">
+                <h2>Canales en directo</h2>
+                <span id="streamCount" class="stream-count-badge"></span>
+            </div>
+            <div class="streams-grid" id="streamsGrid"></div>
+        </section>
+
+        <!-- FILA STREAMERS (avatares circulares abajo) -->
+        <section class="streamers-section">
+            <div class="streamers-scroll" id="streamersRow"></div>
+        </section>
+
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>Cargando streams...</p>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
+<div class="stream-modal" id="streamModal">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <div class="stream-modal-img">
+        <img id="modalImg" src="" alt="">
+        <div class="stream-modal-overlay"></div>
+        <div class="live-badge-modal"><span class="live-dot-sm"></span> EN VIVO</div>
+    </div>
+    <div class="stream-modal-info">
+        <div class="modal-streamer-row">
+            <div class="modal-avatar-circle" id="modalAvatar"></div>
+            <div>
+                <h3 id="modalName"></h3>
+                <p id="modalGame" class="modal-game"></p>
+            </div>
+        </div>
+        <p id="modalTitle" class="modal-stream-title"></p>
+        <div class="modal-tags" id="modalTags"></div>
+        <a id="modalWatchBtn" href="#" target="_blank" class="btn-watch">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            Ver en Twitch
+        </a>
+    </div>
+</div>
+
+<script src="live.js"></script>
+</body>
+</html>

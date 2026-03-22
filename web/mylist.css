@@ -1,0 +1,167 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --blue: #009CF3; --bg: #0a0a0a; --surface: #141414;
+    --surface2: #1e1e1e; --text: #fff; --text-muted: #888;
+    --navbar-h: 68px;
+}
+body { background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); overflow-x: hidden; }
+
+/* NAVBAR */
+.navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-h); display: flex; align-items: center; justify-content: space-between; padding: 0 48px; z-index: 100; background: rgba(10,10,10,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.nav-left { display: flex; align-items: center; gap: 40px; }
+.nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; color: var(--blue); cursor: pointer; }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { color: #bbb; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; position: relative; padding-bottom: 4px; }
+.nav-links a:hover, .nav-links a.active { color: white; }
+.nav-links a.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--blue); border-radius: 2px; }
+.nav-links a.live-link { color: #a78bfa; }
+.nav-right { display: flex; align-items: center; }
+.nav-profile { display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; padding: 6px 10px; border-radius: 8px; }
+.nav-profile:hover { background: rgba(255,255,255,0.08); }
+.nav-avatar { width: 34px; height: 34px; border-radius: 4px; object-fit: cover; }
+.nav-profile span { font-size: 14px; font-weight: 500; }
+.profile-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; min-width: 160px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.profile-dropdown.show { display: block; }
+.profile-dropdown div { padding: 12px 18px; font-size: 14px; color: #ccc; cursor: pointer; }
+.profile-dropdown div:hover { background: rgba(255,255,255,0.06); color: white; }
+
+/* HEADER */
+.list-header { margin-top: var(--navbar-h); position: relative; height: 180px; display: flex; align-items: flex-end; overflow: hidden; }
+.list-header-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #0a0a0a 0%, #0d1a2e 50%, #0a0a0a 100%); }
+.list-header-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 80%, rgba(0,156,243,0.18) 0%, transparent 60%); }
+.list-header-content { position: relative; z-index: 2; padding: 0 48px 32px; }
+.list-header-content h1 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; margin-bottom: 4px; }
+.star { font-size: 38px; vertical-align: middle; }
+.list-count { font-size: 14px; color: var(--text-muted); }
+
+/* EMPTY */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 48px; gap: 14px; text-align: center; }
+.empty-icon { font-size: 60px; }
+.empty-state h2 { font-size: 24px; font-weight: 600; }
+.empty-state p { color: var(--text-muted); }
+.btn-explore { margin-top: 8px; background: var(--blue); color: white; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+.btn-explore:hover { background: #00aaff; transform: scale(1.03); }
+
+/* ── CARRUSEL CIRCULAR ── */
+.wheel-section {
+    position: relative;
+    height: 380px;          /* altura visible = mitad superior del arco */
+    overflow: hidden;       /* oculta la mitad inferior del círculo */
+    margin: 40px 0 10px;
+}
+
+/* difumina bordes izq/der para dar efecto de continuidad */
+.wheel-mask {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 15;
+}
+.wheel-mask::before,
+.wheel-mask::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 220px;
+    pointer-events: none;
+}
+.wheel-mask::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+}
+.wheel-mask::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+}
+
+/* contenedor de las cards — JS posiciona cada una en absolute */
+.wheel-track {
+    position: absolute;
+    inset: 0;
+}
+
+/* CARD BASE — estilos base, JS sobreescribe position/transform */
+.wheel-card {
+    position: absolute;
+    width: 200px;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.wheel-card img {
+    width: 100%; height: 300px; object-fit: cover; display: block;
+}
+.wheel-card-shine {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
+    pointer-events: none;
+}
+.wheel-card-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+    padding: 28px 12px 12px;
+    transition: opacity 0.3s;
+}
+.wheel-card-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wheel-card-meta { font-size: 11px; color: #aaa; }
+
+/* BOTONES */
+.wheel-btn {
+    position: absolute; top: 35%; transform: translateY(-50%);
+    width: 46px; height: 46px; border-radius: 50%; z-index: 20;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15); color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+}
+.wheel-btn:hover { background: var(--blue); border-color: var(--blue); }
+.wheel-btn-left { left: 20px; }
+.wheel-btn-right { right: 20px; }
+
+/* GRID */
+.grid-section { padding: 24px 48px 80px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.section-header h2 { font-size: 18px; font-weight: 600; }
+.count-pill { background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); color: #888; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
+
+.list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.grid-card { cursor: pointer; border-radius: 8px; overflow: hidden; position: relative; transition: transform 0.25s, box-shadow 0.25s; }
+.grid-card:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 5; }
+.grid-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+.grid-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%); opacity: 0; transition: opacity 0.2s; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
+.grid-card:hover .grid-card-overlay { opacity: 1; }
+.grid-card-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+.grid-card-play { background: white; color: black; border: none; border-radius: 4px; padding: 5px; font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
+.grid-card-remove { position: absolute; top: 7px; right: 7px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); color: #ff6b6b; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+.grid-card:hover .grid-card-remove { opacity: 1; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+.content-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.95); width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; background: #181818; border-radius: 16px; z-index: 201; opacity: 0; pointer-events: none; transition: all 0.3s ease; scrollbar-width: none; }
+.content-modal.show { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+.modal-close { position: absolute; top: 16px; right: 16px; z-index: 10; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.6); border: none; color: white; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: rgba(255,255,255,0.2); }
+.modal-hero { position: relative; height: 320px; overflow: hidden; border-radius: 16px 16px 0 0; }
+.modal-hero img { width: 100%; height: 100%; object-fit: cover; }
+.modal-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, #181818 0%, transparent 60%); }
+.modal-hero-info { position: absolute; bottom: 24px; left: 28px; right: 28px; z-index: 2; }
+.modal-hero-info h2 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
+.modal-badges { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.modal-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 4px; font-size: 12px; color: #ccc; }
+.modal-badge.blue { background: rgba(0,156,243,0.15); border-color: rgba(0,156,243,0.4); color: var(--blue); }
+.modal-actions { display: flex; gap: 10px; }
+.btn-play { display: flex; align-items: center; gap: 8px; background: white; color: black; border: none; border-radius: 8px; padding: 10px 22px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-play:hover { background: #ddd; }
+.btn-remove { display: flex; align-items: center; gap: 8px; background: rgba(255,68,68,0.1); color: #ff6b6b; border: 1px solid rgba(255,68,68,0.3); border-radius: 8px; padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-remove:hover { background: rgba(255,68,68,0.2); }
+.modal-body { padding: 20px 28px 28px; }
+.modal-detail { font-size: 14px; color: #aaa; line-height: 1.7; }
+
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; } .nav-links { display: none; }
+    .list-header-content { padding: 0 20px 28px; }
+    .wheel-section { height: 320px; }
+    .wheel-card { width: 140px; }
+    .grid-section { padding: 20px 20px 60px; }
+}

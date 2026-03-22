@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUX - Mi Lista</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mylist.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-left">
+        <div class="nav-logo">BLUX</div>
+        <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="movies.html">Movies</a></li>
+            <li><a href="mylist.html" class="active">MyList</a></li>
+            <li><a href="live.html" class="live-link">Live</a></li>
+        </ul>
+    </div>
+    <div class="nav-right">
+        <div class="nav-profile" onclick="toggleProfileMenu()">
+            <img id="navAvatar" src="" alt="perfil" class="nav-avatar">
+            <span id="navName"></span>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div onclick="window.location.href='index.html'">Cambiar perfil</div>
+                <div onclick="cerrarSesion()">Cerrar sesión</div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HEADER -->
+<header class="list-header">
+    <div class="list-header-bg"></div>
+    <div class="list-header-content">
+        <h1>Mi Lista <span class="star">⭐</span></h1>
+        <p id="listCount" class="list-count"></p>
+    </div>
+</header>
+
+<!-- EMPTY STATE -->
+<div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">🎬</div>
+    <h2>Tu lista está vacía</h2>
+    <p>Agrega películas y series desde el catálogo</p>
+    <a href="home.html" class="btn-explore">Explorar catálogo</a>
+</div>
+
+<!-- MAIN -->
+<main class="list-main" id="listMain" style="display:none">
+
+    <!-- CARRUSEL CIRCULAR -->
+    <section class="wheel-section">
+        <div class="wheel-mask">
+            <div class="wheel-track" id="wheelTrack"></div>
+        </div>
+        <!-- Controles -->
+        <button class="wheel-btn wheel-btn-left" onclick="pausarYDeslizar(-1)">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="wheel-btn wheel-btn-right" onclick="pausarYDeslizar(1)">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+    </section>
+
+    <!-- GRID COMPLETO -->
+    <section class="grid-section">
+        <div class="section-header">
+            <h2>Todos los títulos</h2>
+            <span id="gridCount" class="count-pill"></span>
+        </div>
+        <div class="list-grid" id="listGrid"></div>
+    </section>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
+<div class="content-modal" id="contentModal">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <div class="modal-hero">
+        <img id="modalImg" src="" alt="">
+        <div class="modal-hero-overlay"></div>
+        <div class="modal-hero-info">
+            <h2 id="modalTitle"></h2>
+            <div class="modal-badges" id="modalBadges"></div>
+            <div class="modal-actions">
+                <button class="btn-play" id="modalPlayBtn">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    Reproducir
+                </button>
+                <button class="btn-remove" onclick="quitarDeLista()">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+                    Quitar de Mi Lista
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body"><div class="modal-detail" id="modalDetail"></div></div>
+</div>
+
+<script src="mylist.js"></script>
+</body>
+</html>
